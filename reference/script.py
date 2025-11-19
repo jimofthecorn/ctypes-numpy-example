@@ -2,7 +2,7 @@ import numpy as np
 import numpy.ctypeslib as npct
 import ctypes as ct
 
-mymodule = npct.load_library('libpymodule', '.')
+mymodule = npct.load_library('reference', '.')
 
 def define_arguments():
     ''' Convenience function for defining the arguments of the functions
@@ -16,18 +16,18 @@ def define_arguments():
     args = [int_2d_type,
             uint_1d_type,     
     ]
-    mymodule.print.argtypes = args
+    mymodule.apply_print.argtypes = args
 
     args = [int_2d_type,
             ct.c_int,      # Integer type
             int_2d_type,
             uint_1d_type
     ]
-    mymodule.multiply.argtypes = args
+    # mymodule.multiply.argtypes = args
 
     # Define return type of the C fucntions. Also not necessary, but good practice.
-    mymodule.print.restype = ct.c_int
-    mymodule.multiply.restype = ct.c_int
+    mymodule.apply_print.restype = ct.c_int
+    # mymodule.multiply.restype = ct.c_int
     
 define_arguments()
 
@@ -40,9 +40,9 @@ arr_out = np.zeros_like(arr_in)
 shape = np.array(arr_in.shape, dtype=np.uint32)
 
 # Call functions
-mymodule.print(arr_in, shape)
+mymodule.apply_print(arr_in, shape)
 factor = -2
-mymodule.multiply(arr_in, factor, arr_out, shape)
+# mymodule.multiply(arr_in, factor, arr_out, shape)
 
-print(arr_out)
+# print(arr_out)
 
