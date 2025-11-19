@@ -3,7 +3,7 @@ import numpy.ctypeslib as npct
 import ctypes as ct
 
 # Import module
-mymodule = npct.load_library('libpymodule', '.')
+mymodule = npct.load_library('simplest', '.')
 
 def call_multiply(arr_in, factor):
     ''' Convenience function for converting the arguments from numpy 
@@ -23,6 +23,8 @@ def call_multiply(arr_in, factor):
 # Generate some 2D numpy array
 N = 5
 arr_in = np.arange(N**2, dtype=np.int32).reshape(N, N)
+print("arr_in:")
+print(arr_in)
 
 # Allocate the output array in memory, and get the shape of the array
 arr_out = np.zeros_like(arr_in)
@@ -32,5 +34,6 @@ shape = np.array(arr_in.shape, dtype=np.uint32)
 factor = -2
 arr_out = call_multiply(arr_in, factor)
 
+print(f"arr_in * {factor}")
 print(arr_out)
 
