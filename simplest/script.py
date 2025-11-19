@@ -11,6 +11,10 @@ def call_multiply(arr_in, factor):
 
     c_intp = ct.POINTER(ct.c_int)                      # ctypes integer pointer 
     c_uintp = ct.POINTER(ct.c_uint)                    # ctypes unsigned integer pointer 
+    shape = np.array(arr_in.shape, dtype=np.uint32)
+
+    # Allocate the output array in memory, and get the shape of the array
+    arr_out = np.zeros_like(arr_in)
 
     # Call function
     mymodule.multiply(arr_in.ctypes.data_as(c_intp),   # Cast numpy array to ctypes integer pointer
@@ -20,20 +24,17 @@ def call_multiply(arr_in, factor):
                     
     return arr_out
 
-# Generate some 2D numpy array
-N = 5
-arr_in = np.arange(N**2, dtype=np.int32).reshape(N, N)
-print("arr_in:")
-print(arr_in)
+if __name__ == "__main__":
+    # Generate some 2D numpy array
+    N = 10
+    arr_in = np.arange(N**2, dtype=np.int32).reshape(N, N)
+    print("arr_in:")
+    print(arr_in)
 
-# Allocate the output array in memory, and get the shape of the array
-arr_out = np.zeros_like(arr_in)
-shape = np.array(arr_in.shape, dtype=np.uint32)
+    # Call function
+    factor = -2
+    arr_out = call_multiply(arr_in, factor)
 
-# Call function
-factor = -2
-arr_out = call_multiply(arr_in, factor)
-
-print(f"arr_in * {factor}")
-print(arr_out)
+    print(f"arr_in * {factor}")
+    print(arr_out)
 
