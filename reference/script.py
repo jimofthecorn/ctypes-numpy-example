@@ -2,7 +2,7 @@ import numpy as np
 import numpy.ctypeslib as npct
 import ctypes as ct
 
-mymodule = npct.load_library('reference', '.')
+odinlib = npct.load_library('reference', '.')
 
 def define_arguments():
     ''' Convenience function for defining the arguments of the functions
@@ -13,21 +13,22 @@ def define_arguments():
     npflags = ['C_CONTIGUOUS']   # Require a C contiguous array in memory
     uint_1d_type = npct.ndpointer(dtype=np.uint32, ndim=1, flags=npflags)
     int_2d_type = npct.ndpointer(dtype=np.int32, ndim=2, flags=npflags)
-    args = [int_2d_type,
-            uint_1d_type,     
+    print_args = [
+        int_2d_type,
+        uint_1d_type,
     ]
-    mymodule.apply_print.argtypes = args
+    odinlib.apply_print.argtypes = print_args
+    odinlib.apply_print.restype = ct.c_int
+    odinlib.cpp_print.argtypes = print_args
+    odinlib.cpp_print.restype = ct.c_int
 
-    args = [int_2d_type,
-            ct.c_int,      # Integer type
-            int_2d_type,
-            uint_1d_type
+    mult_args = [
+        int_2d_type,
+        uint_1d_type,
+        ct.c_int      # Integer type
     ]
-    # mymodule.multiply.argtypes = args
-
-    # Define return type of the C fucntions. Also not necessary, but good practice.
-    mymodule.apply_print.restype = ct.c_int
-    # mymodule.multiply.restype = ct.c_int
+    odinlib.apply_multiply.argtypes = mult_args
+    odinlib.apply_multiply.restype = ct.c_int
     
 define_arguments()
 
@@ -36,13 +37,15 @@ N = 5
 arr_in = np.arange(N**2, dtype=np.int32).reshape(N, N)
 
 # Allocate the output array in memory, and get the shape of the array
-arr_out = np.zeros_like(arr_in)
 shape = np.array(arr_in.shape, dtype=np.uint32)
 
 # Call functions
-mymodule.apply_print(arr_in, shape)
+odinlib.apply_print(arr_in, shape)
 factor = -2
-# mymodule.multiply(arr_in, factor, arr_out, shape)
+odinlib.apply_multiply(arr_in, shape, factor)
 
-# print(arr_out)
+print(arr_in)
+arr_in = np.ascontiguousarray(arr_in.transpose())
+odinlib.apply_print(arr_in, shape)
+odinlib.cpp_print(arr_in, shape)
 

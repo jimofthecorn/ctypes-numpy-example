@@ -16,12 +16,12 @@ extern "C" {
 // Definitions of the interface functions
 
 int print(int *arr_in, unsigned int *shape) {
-  apply_print(arr_in, shape);
+    myfuncs::print(arr_in, shape);
   return 0;
 }
 
 int multiply(int *arr_in, int factor, int *arr_out, unsigned int *shape) {
-  apply_multiply(arr_in, factor, arr_out, shape);
+    myfuncs::multiply(arr_in, factor, arr_out, shape);
   return 0;
 }
 
