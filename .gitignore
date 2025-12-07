@@ -3,4 +3,5 @@
 *.exp
 *.lib
 *.obj
+*.a
 */build/
