@@ -2,6 +2,7 @@ package reference
 
 import "base:runtime"
 import "core:c"
+import "core:slice"
 import "core:fmt"
 
 import "cpp_ref"
@@ -31,6 +32,8 @@ apply_multiply :: proc "c" (arr_in : [^]c.int, shape : [^]c.uint, factor : c.int
 
     num_rows := shape[0]
     num_cols := shape[1]
+    slice_in := slice.from_ptr(arr_in, cast(int)(num_rows * num_cols))
+    fmt.println(slice_in)
 
     for row in 0..<num_rows {
         for col in 0..<num_cols {
