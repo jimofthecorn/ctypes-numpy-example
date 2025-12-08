@@ -4,6 +4,10 @@ import "base:runtime"
 import "core:c"
 import "core:slice"
 import "core:fmt"
+import "core:simd"
+import "core:time"
+
+NUM_REPETITIONS :: #config(REP, 100) // The number of times to run each proc, for performance measurement
 
 ImageSlice :: []c.uint16_t
 Image :: struct {
@@ -66,5 +70,30 @@ extract_searchbox :: proc(input_image: Image, box: SearchBox) -> ImageSlice {
 
     sbslice := slice.concatenate(rows[:]) 
 
+    fmt.println(sbslice)
+
+	fmt.printfln("Max (Scalar): %d (%v)", benchmark(max_scalar, sbslice))
+
     return sbslice
+}
+
+max_scalar :: proc (box: ImageSlice) -> c.uint16_t {
+    val := min(c.uint16_t)
+
+    for x in box {
+        val = max(val, x)
+    }
+    return val
+}
+
+
+benchmark :: proc (p: proc (ImageSlice) -> c.uint16_t, s: ImageSlice) -> (c.uint16_t, time.Duration) {
+	best_elapsed := max(time.Duration)
+	result : c.uint16_t
+	for _ in 0..<NUM_REPETITIONS {
+		start := time.tick_now()
+		result = p(s)
+		best_elapsed = min(time.tick_since(start), best_elapsed)
+	}
+	return result, best_elapsed
 }
