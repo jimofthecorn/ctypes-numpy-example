@@ -4,8 +4,9 @@ import "base:runtime"
 import "core:c"
 import "core:slice"
 import "core:fmt"
-import "core:simd"
 import "core:time"
+import "core:simd"
+import "core:math/rand"
 
 NUM_REPETITIONS :: #config(REP, 100) // The number of times to run each proc, for performance measurement
 
@@ -54,6 +55,18 @@ process_searchbox :: proc "c" (
     fmt.println(box_slice)
 
     return 1
+}
+
+make_random_image :: proc(shape: [2]c.uint, allocator: mem.Allocator) -> (img: Image, err: mem.Allocator_Error) {
+
+    num_rows := int(shape[0])
+    num_cols := int(shape[1])
+
+    img := Image {
+        num_rows = num_rows,
+        num_cols = num_cols,
+    }
+    img.data := make([]c.uint16_t, num_rows * num_cols, allocator) or_return
 }
 
 extract_searchbox :: proc(input_image: Image, box: SearchBox) -> ImageSlice {
